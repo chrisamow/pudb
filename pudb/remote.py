@@ -44,6 +44,7 @@ default_port = 6899
 
 PUDB_RDB_HOST = os.environ.get("PUDB_RDB_HOST") or "127.0.0.1"
 PUDB_RDB_PORT = int(os.environ.get("PUDB_RDB_PORT") or default_port)
+PUDB_RDB_TERMSIZE = tuple(os.environ.get("PUDB_RDB_TERMSIZE", '').strip('()').split(',')) or None
 
 #: Holds the currently active debugger.
 _current = [None]
@@ -222,9 +223,14 @@ def set_trace(
         frame = _frame().f_back
     if term_size is None:
         try:
-            # Getting terminal size
-            s = struct.unpack("hh", fcntl.ioctl(1, termios.TIOCGWINSZ, "1234"))
-            term_size = (s[1], s[0])
+            # Check for explicit setting
+            if PUDB_RDB_TERMSIZE and len(PUDB_RDB_TERMSIZE)==2:
+                term_size = PUDB_RDB_TERMSIZE
+            else:
+                # Getting terminal size
+                s = struct.unpack("hh", fcntl.ioctl(1, termios.TIOCGWINSZ, "1234"))
+                term_size = (s[1], s[0])
+
         except Exception:
             term_size = (80, 24)
 

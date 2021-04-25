@@ -44,6 +44,7 @@ default_port = 6899
 
 PUDB_RDB_HOST = os.environ.get("PUDB_RDB_HOST") or "127.0.0.1"
 PUDB_RDB_PORT = int(os.environ.get("PUDB_RDB_PORT") or default_port)
+# some remote environments do not resize correctly so need explicit non default term size settings
 PUDB_RDB_TERMSIZE = tuple(os.environ.get("PUDB_RDB_TERMSIZE", '').strip('()').split(',')) or None
 
 #: Holds the currently active debugger.
